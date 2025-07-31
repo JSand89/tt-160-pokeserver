@@ -1,3 +1,4 @@
+import pokemonModel from "../models/pokemon.model.js"
 import PokemonModel from "../models/pokemon.model.js"
 import fetchPokemon from "../services/fetchPokemon.js"
 
@@ -8,7 +9,8 @@ const hola = async (req,res)=>{
 
 const createPokemon = async (req,res)=>{
     try {
-        const toCreate = fetchPokemon(req.body.pokemon_id)
+        const toCreate = await fetchPokemon(req.body.pokemon_id)
+        console.log(toCreate)
         if(toCreate == null){
             return res.status(400).send("pokemon_id no valido")
         }
@@ -44,7 +46,45 @@ const getPokemonForPokedexStatus = async (req,res)=>{
         if(pokemon == null){
             return res.status(404).send("Pokemon no existe")
         }
-        return res.status(200).json(pokemon) 
+        const data = await pokemonModel.find({"pokemon_id":pokemon_id})
+        if (data.length == 0){
+            const pokemonStatus = {
+                name:pokemon.name,
+                pokemon_id:pokemon_id,
+                view:true,
+                catch:false,
+                in_team:false,
+                image: pokemon.sprites.front_default
+            }
+            return res.status(200).json(pokemonStatus)
+        }
+        let pokemon_view = data.filter(pokemon=>pokemon.catch == false )
+        if(pokemon_view.length > 0){
+             {
+            const pokemonStatus = {
+                name:pokemon.name,
+                pokemon_id:pokemon_id,
+                view:true,
+                catch:false,
+                in_team:false,
+                image: pokemon.sprites.front_default
+            }
+            return res.status(200).json(pokemonStatus)
+            }
+        }
+        let pokemon_in_team = data.filter(pokemon=>pokemon.in_team == true )
+        if(pokemon_in_team.length > 0 ){
+            const pokemonStatus = {
+                name:pokemon.name,
+                pokemon_id:pokemon_id,
+                view:true,
+                catch:true,
+                in_team:true,
+                image: pokemon.sprites.front_default
+            }
+            return res.status(200).json(pokemonStatus)
+        }
+
     } catch (error) {
         return error
     }
