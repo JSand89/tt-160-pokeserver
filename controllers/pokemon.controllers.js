@@ -59,7 +59,7 @@ const getPokemonForPokedexStatus = async (req,res)=>{
             return res.status(200).json(pokemonStatus)
         }
         let pokemon_view = data.filter(pokemon=>pokemon.catch == false )
-        if(pokemon_view.length > 0){
+        if(pokemon_view.length != 0){
              {
             const pokemonStatus = {
                 name:pokemon.name,
@@ -84,10 +84,32 @@ const getPokemonForPokedexStatus = async (req,res)=>{
             }
             return res.status(200).json(pokemonStatus)
         }
-
+         const pokemonStatus = {
+                name:pokemon.name,
+                pokemon_id:pokemon_id,
+                view:true,
+                catch:true,
+                in_team:false,
+                image: pokemon.sprites.front_default
+            }
+            return res.status(200).json(pokemonStatus)
     } catch (error) {
         return error
     }
 
 }
-export {hola,createPokemon,getPokemons, getPokemonForPokedexStatus}
+const catchPokemon = async (req,res)=>{
+    try {
+        const {id} = req.params
+        
+        const pokemonToChange = await  PokemonModel.findByIdAndUpdate(id,{catch:true},{new:true})
+        if(pokemonToChange== null){
+            res.status(404).send("Pokemon no encontrado en DB")
+        }
+        return res.status(200).json(pokemonToChange)  
+    }
+         catch (error) {
+        
+    }
+}
+export {hola,createPokemon,getPokemons, getPokemonForPokedexStatus, catchPokemon}
