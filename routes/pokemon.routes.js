@@ -1,10 +1,11 @@
 import {Router} from "express"
-import {hola, createPokemon,getPokemons,getPokemonForPokedexStatus,catchPokemon} from "../controllers/pokemon.controllers.js"
+import {hola, viewPokemon,getPokemons,getPokemonForPokedexStatus,catchPokemon,changeStatusInTeam} from "../controllers/pokemon.controllers.js"
 const router = Router()
 
 router.get("/hola",hola)
-router.post("/view",createPokemon)
+router.post("/view",viewPokemon)
 router.get("/",getPokemons)
 router.get("/:pokemon_id",getPokemonForPokedexStatus)
-router.put("/:id",catchPokemon)
+router.post("/catch/",catchPokemon)
+router.put("/in_team/:id",changeStatusInTeam)
 export default router
